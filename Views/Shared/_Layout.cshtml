@@ -6,41 +6,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
+    <link rel="stylesheet" href="~/lib/dist/css/bootstrap.min.css" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
 <body>
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top shadow-sm">
-        <div class="container-fluid px-4">
-            <a class="navbar-brand fw-bold d-flex align-items-center gap-2"
-                   asp-controller="Productos" asp-action="Index">
-                <i class="bi bi-car-front-fill fs-4"></i>
-                ComercializadoraelExito
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow">
+        <div class="container">
+            <a class="navbar-brand fw-bold" asp-controller="Productos" asp-action="Index">
+                Comercializadora El Éxito
             </a>
 
-            <button class="navbar-toggler" type="button"
-                    data-bs-toggle="collapse" data-bs-target="#menu">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div class="collapse navbar-collapse" id="menu">
-                <ul class="navbar-nav ms-auto gap-1 text-center text-lg-start">
-                    <li class="nav-item">
-                        <a class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Registrar" ? "active" : "")"
-                               asp-controller="Productos" asp-action="Registrar">
-                            <i class="bi bi-plus-circle"></i> Registrar
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Historial" ? "active" : "")"
-                               asp-controller="Productos" asp-action="Historial">
-                            <i class="bi bi-card-list"></i> Historial
-                        </a>
-                    </li>
-                </ul>
+            <div class="navbar-nav">
+                <a class="nav-link" asp-controller="Productos" asp-action="Index">
+                    Productos
+                </a>
+                <a class="nav-link" asp-controller="Factura" asp-action="Historial">
+                    Facturación
+                </a>
             </div>
         </div>
     </nav>
@@ -53,6 +38,6 @@
         © 2026 · Comercializadora el Exito MVC · Programación Avanzada
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

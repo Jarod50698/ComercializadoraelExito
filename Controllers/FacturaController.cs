@@ -4,7 +4,7 @@ using ComercializadoraelExito.Models;
 using ComercializadoraelExito.Services;
 using System.Text;
 using ComercializadoraelExito.Data;
-
+using ComercializadoraelExito.ViewModels;
 namespace ComercializadoraelExito.Controllers
 {
     public class FacturaController : Controller
@@ -26,61 +26,41 @@ namespace ComercializadoraelExito.Controllers
 
             return View(facturas);
         }
-
         public IActionResult Crear()
         {
-            ViewBag.Productos = _context.Productos.ToList();
-            return View();
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Crear(string nombreCliente, int productoId, int cantidad)
-        {
-            if (string.IsNullOrWhiteSpace(nombreCliente))
+            var vm = new FacturaViewModel
             {
-                ModelState.AddModelError("", "El nombre del cliente es obligatorio.");
-            }
-
-            if (cantidad <= 0)
-            {
-                ModelState.AddModelError("", "La cantidad debe ser mayor a cero.");
-            }
-
-            var producto = _context.Productos.Find(productoId);
-
-            if (producto == null)
-            {
-                ModelState.AddModelError("", "El producto seleccionado no existe.");
-            }
-
-            if (!ModelState.IsValid)
-            {
-                ViewBag.Productos = _context.Productos.ToList();
-                return View();
-            }
-
-            var factura = new Factura
-            {
-                NombreCliente = nombreCliente.Trim(),
-                Fecha = DateTime.Now
+                ProductosDisponibles = _context.Productos.ToList()
             };
 
-            factura.Detalles.Add(new DetalleFactura
-            {
-                ProductoId = producto!.Id,
-                NombreProducto = producto.Nombre,
-                Cantidad = cantidad,
-                PrecioUnitario = producto.Precio
-            });
-
-            _service.CalcularTotales(factura);
-
-            _context.Facturas.Add(factura);
-            _context.SaveChanges();
-
-            return RedirectToAction("Historial");
+            return View(vm);
         }
+
+[HttpPost]
+[ValidateAntiForgeryToken]
+public IActionResult Crear(FacturaViewModel vm)
+{
+    if (!ModelState.IsValid || vm.Detalles == null || !vm.Detalles.Any(d => d.Cantidad > 0))
+    {
+        vm.ProductosDisponibles = _context.Productos.ToList();
+        ModelState.AddModelError("", "Debe seleccionar al menos un producto con cantidad mayor a cero.");
+        return View(vm);
+    }
+
+    var factura = new Factura
+    {
+        NombreCliente = vm.NombreCliente.Trim(),
+        Fecha = DateTime.Now,
+        Detalles = vm.Detalles.Where(d => d.Cantidad > 0).ToList()
+    };
+
+    _service.CalcularTotales(factura);
+
+    _context.Facturas.Add(factura);
+    _context.SaveChanges();
+
+    return RedirectToAction("Historial");
+}
 
         public IActionResult Descargar(int id)
         {

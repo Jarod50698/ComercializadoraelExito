@@ -1,9 +1,9 @@
-﻿@model ComercializadoraelExito.Models.Factura
+﻿@model ComercializadoraelExito.ViewModels.FacturaViewModel
 
 <h2>Nueva Factura</h2>
 
 <form asp-action="Crear" method="post">
-    @Html.AntiForgeryToken()
+
     <div class="mb-3">
         <label>Nombre Cliente</label>
         <input asp-for="NombreCliente" class="form-control" />

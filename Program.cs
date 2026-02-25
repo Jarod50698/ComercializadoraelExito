@@ -1,16 +1,20 @@
 using ComercializadoraelExito.Data;
+using ComercializadoraelExito.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllersWithViews();
-
+// DbContext
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(
         builder.Configuration.GetConnectionString("DefaultConnection"),
         new MySqlServerVersion(new Version(8, 0, 36))
-    )
-);
+    ));
+
+// 👇 ESTA LÍNEA FALTABA
+builder.Services.AddScoped<FacturaService>();
+
+builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
