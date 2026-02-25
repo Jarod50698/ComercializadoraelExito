@@ -1,0 +1,49 @@
+﻿@model ComercializadoraelExito.Models.Factura
+
+<h2>Nueva Factura</h2>
+
+<form asp-action="Crear" method="post">
+    @Html.AntiForgeryToken()
+    <div class="mb-3">
+        <label>Nombre Cliente</label>
+        <input asp-for="NombreCliente" class="form-control" />
+    </div>
+
+    <h4>Agregar Productos</h4>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Cantidad</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.ProductosDisponibles.Count; i++)
+            {
+                <tr>
+                    <td>
+                        <input type="hidden" name="Detalles[@i].ProductoId" value="@Model.ProductosDisponibles[i].Id" />
+                        <input type="hidden" name="Detalles[@i].NombreProducto" value="@Model.ProductosDisponibles[i].Nombre" />
+                        <input type="hidden" name="Detalles[@i].PrecioUnitario" value="@Model.ProductosDisponibles[i].Precio" />
+
+                        @Model.ProductosDisponibles[i].Nombre
+                        (₡@Model.ProductosDisponibles[i].Precio)
+                    </td>
+                    <td>
+                        <input type="number"
+                               name="Detalles[@i].Cantidad"
+                               class="form-control"
+                               min="0"
+                               value="0" />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <button type="submit" class="btn btn-success">
+        Guardar Factura
+    </button>
+
+</form>

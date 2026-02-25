@@ -34,28 +34,41 @@ namespace ComercializadoraelExito.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Crear(string nombreCliente, int productoId, int cantidad)
         {
-            if (string.IsNullOrEmpty(nombreCliente) || cantidad <= 0)
+            if (string.IsNullOrWhiteSpace(nombreCliente))
             {
-                TempData["Error"] = "Datos inválidos";
-                return RedirectToAction("Crear");
+                ModelState.AddModelError("", "El nombre del cliente es obligatorio.");
+            }
+
+            if (cantidad <= 0)
+            {
+                ModelState.AddModelError("", "La cantidad debe ser mayor a cero.");
             }
 
             var producto = _context.Productos.Find(productoId);
 
             if (producto == null)
-                return RedirectToAction("Crear");
+            {
+                ModelState.AddModelError("", "El producto seleccionado no existe.");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Productos = _context.Productos.ToList();
+                return View();
+            }
 
             var factura = new Factura
             {
-                NombreCliente = nombreCliente,
+                NombreCliente = nombreCliente.Trim(),
                 Fecha = DateTime.Now
             };
 
             factura.Detalles.Add(new DetalleFactura
             {
-                ProductoId = producto.Id,
+                ProductoId = producto!.Id,
                 NombreProducto = producto.Nombre,
                 Cantidad = cantidad,
                 PrecioUnitario = producto.Precio
@@ -76,7 +89,9 @@ namespace ComercializadoraelExito.Controllers
                 .FirstOrDefault(f => f.Id == id);
 
             if (factura == null)
-                return NotFound();
+            {
+                return NotFound("La factura solicitada no existe.");
+            }
 
             var sb = new StringBuilder();
 

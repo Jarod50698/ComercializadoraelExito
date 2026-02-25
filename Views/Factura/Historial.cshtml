@@ -1,0 +1,51 @@
+﻿@model List<ComercializadoraelExito.Models.Factura>
+
+<h2>Historial de Facturas</h2>
+
+<a asp-action="Crear" class="btn btn-primary mb-3">
+    Nueva Factura
+</a>
+
+@foreach (var f in Model)
+{
+    <div class="card mb-3 shadow">
+        <div class="card-body">
+            <h5>Factura #@f.Id</h5>
+            <p><strong>Cliente:</strong> @f.NombreCliente</p>
+            <p><strong>Fecha:</strong> @f.Fecha.ToString("dd/MM/yyyy HH:mm")</p>
+
+            <table class="table table-sm">
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Cantidad</th>
+                        <th>Precio</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var d in f.Detalles.Where(x => x.Cantidad > 0))
+                    {
+                            <tr>
+                                <td>@f.Id</td>
+                                <td>@f.NombreCliente</td>
+                                <td>@f.Fecha.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td>₡@f.Total</td>
+                                <td>
+                                    <a asp-action="Descargar" asp-route-id="@f.Id">
+                                        Descargar
+                                    </a>
+                                </td>
+                            </tr>
+                    }
+                </tbody>
+            </table>
+
+            <p><strong>Total:</strong> ₡@f.Total</p>
+
+            <a asp-action="DescargarPdf" asp-route-id="@f.Id"
+                   class="btn btn-danger btn-sm">
+                Descargar PDF
+            </a>
+        </div>
+    </div>
+}
