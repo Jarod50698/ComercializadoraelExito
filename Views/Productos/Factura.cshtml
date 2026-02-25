@@ -1,9 +1,9 @@
 ﻿
 @model List<Factura>
 
-<h2>Historial de Facturas</h2>
+<h2>Historial de  las Facturas</h2>
 
-<a asp-action="Crear">Nueva Factura</a>
+<a asp-action="Crear">Nueva  Factura</a>
 
 <table class="table">
     <tr>
@@ -21,7 +21,7 @@
             <td>@f.Fecha</td>
             <td>@f.Total</td>
             <td>
-                <a asp-action="Descargar" asp-route-id="@f.Id">
+                <a asp-action="Descarga" asp-route-id="@f.Id">
                     Descargar
                 </a>
             </td>
