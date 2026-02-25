@@ -1,0 +1,22 @@
+﻿@model List<Producto>
+
+<h2>Lista de Productos</h2>
+
+<a asp-action="Create">Nuevo Producto</a>
+
+<table class="table">
+    <tr>
+        <th>Id</th>
+        <th>Nombre</th>
+        <th>Precio</th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.Id</td>
+            <td>@item.Nombre</td>
+            <td>@item.Precio</td>
+        </tr>
+    }
+</table>
