@@ -1,24 +1,39 @@
 using ComercializadoraelExito.Data;
 using ComercializadoraelExito.Services;
 using Microsoft.EntityFrameworkCore;
+using QuestPDF.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// DbContext
+// Licencia QuestPDF
+QuestPDF.Settings.License = LicenseType.Community;
+
+// MVC
+builder.Services.AddControllersWithViews();
+
+// Base de datos
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(
         builder.Configuration.GetConnectionString("DefaultConnection"),
         new MySqlServerVersion(new Version(8, 0, 36))
-    ));
+    )
+);
 
-// 👇 ESTA LÍNEA FALTABA
+// Servicios
 builder.Services.AddScoped<FacturaService>();
-
-builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
+// Manejo de errores en producción
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Home/Error");
+    app.UseHsts();
+}
+
+app.UseHttpsRedirection();
 app.UseStaticFiles();
+
 app.UseRouting();
 
 app.MapControllerRoute(

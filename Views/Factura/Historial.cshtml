@@ -25,17 +25,11 @@
                 <tbody>
                     @foreach (var d in f.Detalles.Where(x => x.Cantidad > 0))
                     {
-                            <tr>
-                                <td>@f.Id</td>
-                                <td>@f.NombreCliente</td>
-                                <td>@f.Fecha.ToString("dd/MM/yyyy HH:mm")</td>
-                                <td>₡@f.Total</td>
-                                <td>
-                                    <a asp-action="Descargar" asp-route-id="@f.Id">
-                                        Descargar
-                                    </a>
-                                </td>
-                            </tr>
+                        <tr>
+                            <td>@d.NombreProducto</td>
+                            <td>@d.Cantidad</td>
+                            <td>₡@d.PrecioUnitario</td>
+                        </tr>
                     }
                 </tbody>
             </table>

@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ComercializadoraelExito.Data;
 using ComercializadoraelExito.Models;
 using ComercializadoraelExito.Services;
-using System.Text;
-using ComercializadoraelExito.Data;
 using ComercializadoraelExito.ViewModels;
+
 namespace ComercializadoraelExito.Controllers
 {
     public class FacturaController : Controller
@@ -26,6 +26,7 @@ namespace ComercializadoraelExito.Controllers
 
             return View(facturas);
         }
+
         public IActionResult Crear()
         {
             var vm = new FacturaViewModel
@@ -36,65 +37,44 @@ namespace ComercializadoraelExito.Controllers
             return View(vm);
         }
 
-[HttpPost]
-[ValidateAntiForgeryToken]
-public IActionResult Crear(FacturaViewModel vm)
-{
-    if (!ModelState.IsValid || vm.Detalles == null || !vm.Detalles.Any(d => d.Cantidad > 0))
-    {
-        vm.ProductosDisponibles = _context.Productos.ToList();
-        ModelState.AddModelError("", "Debe seleccionar al menos un producto con cantidad mayor a cero.");
-        return View(vm);
-    }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Crear(FacturaViewModel vm)
+        {
+            if (!ModelState.IsValid || vm.Detalles == null || !vm.Detalles.Any(d => d.Cantidad > 0))
+            {
+                vm.ProductosDisponibles = _context.Productos.ToList();
+                ModelState.AddModelError("", "Debe seleccionar al menos un producto.");
+                return View(vm);
+            }
 
-    var factura = new Factura
-    {
-        NombreCliente = vm.NombreCliente.Trim(),
-        Fecha = DateTime.Now,
-        Detalles = vm.Detalles.Where(d => d.Cantidad > 0).ToList()
-    };
+            var factura = new Factura
+            {
+                NombreCliente = vm.NombreCliente.Trim(),
+                Fecha = DateTime.Now,
+                Detalles = vm.Detalles.Where(d => d.Cantidad > 0).ToList()
+            };
 
-    _service.CalcularTotales(factura);
+            _service.CalcularTotales(factura);
 
-    _context.Facturas.Add(factura);
-    _context.SaveChanges();
+            _context.Facturas.Add(factura);
+            _context.SaveChanges();
 
-    return RedirectToAction("Historial");
-}
+            return RedirectToAction("Historial");
+        }
 
-        public IActionResult Descargar(int id)
+        public IActionResult DescargarPdf(int id)
         {
             var factura = _context.Facturas
                 .Include(f => f.Detalles)
                 .FirstOrDefault(f => f.Id == id);
 
             if (factura == null)
-            {
-                return NotFound("La factura solicitada no existe.");
-            }
+                return NotFound();
 
-            var sb = new StringBuilder();
+            var pdf = _service.GenerarPdf(factura);
 
-            sb.AppendLine("FACTURA");
-            sb.AppendLine("Cliente: " + factura.NombreCliente);
-            sb.AppendLine("Fecha: " + factura.Fecha);
-            sb.AppendLine("--------------------------------");
-
-            foreach (var d in factura.Detalles)
-            {
-                sb.AppendLine($"{d.NombreProducto} x{d.Cantidad} - ₡{d.PrecioUnitario}");
-            }
-
-            sb.AppendLine("--------------------------------");
-            sb.AppendLine("Subtotal: ₡" + factura.Subtotal);
-            sb.AppendLine("Impuesto (13%): ₡" + factura.Impuesto);
-            sb.AppendLine("Total: ₡" + factura.Total);
-
-            return File(
-                Encoding.UTF8.GetBytes(sb.ToString()),
-                "text/plain",
-                $"Factura_{factura.Id}.txt"
-            );
+            return File(pdf, "application/pdf", $"Factura_{factura.Id}.pdf");
         }
     }
 }

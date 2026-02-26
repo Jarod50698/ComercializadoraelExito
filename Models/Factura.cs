@@ -12,11 +12,9 @@ namespace ComercializadoraelExito.Models
         public DateTime Fecha { get; set; } = DateTime.Now;
 
         public decimal Subtotal { get; set; }
-
         public decimal Impuesto { get; set; }
-
         public decimal Total { get; set; }
 
-        public List<DetalleFactura> Detalles { get; set; } = new List<DetalleFactura>();
+        public List<DetalleFactura> Detalles { get; set; } = new();
     }
 }

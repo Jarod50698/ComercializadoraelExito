@@ -1,13 +1,10 @@
-﻿using ComercializadoraelExito.Models;
-
-namespace ComercializadoraelExito.Models
+﻿namespace ComercializadoraelExito.Models
 {
     public class DetalleFactura
     {
         public int Id { get; set; }
 
         public int ProductoId { get; set; }
-
         public int FacturaId { get; set; }
 
         public string NombreProducto { get; set; } = string.Empty;

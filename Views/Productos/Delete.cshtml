@@ -1,0 +1,23 @@
+﻿@model ComercializadoraelExito.Models.Producto
+
+<h2 class="text-danger">Eliminar Producto</h2>
+
+<div class="alert alert-warning">
+    ¿Estás seguro que deseas eliminar este producto?
+</div>
+
+<div class="card shadow p-3 mb-3">
+    <p><strong>Nombre:</strong> @Model.Nombre</p>
+    <p><strong>Precio:</strong> ₡@Model.Precio.ToString("N2")</p>
+</div>
+
+<form asp-action="Delete" method="post">
+    
+    @Html.AntiForgeryToken()
+
+    <input type="hidden" asp-for="Id" />
+
+    <button type="submit" class="btn btn-danger">Eliminar</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+
+</form>
