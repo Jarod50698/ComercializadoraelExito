@@ -41,18 +41,28 @@ namespace ComercializadoraelExito.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Crear(FacturaViewModel vm)
         {
-            if (!ModelState.IsValid || vm.Detalles == null || !vm.Detalles.Any(d => d.Cantidad > 0))
+            if (!ModelState.IsValid)
             {
                 vm.ProductosDisponibles = _context.Productos.ToList();
-                ModelState.AddModelError("", "Debe seleccionar al menos un producto.");
+                return View(vm);
+            }
+
+            var detallesValidos = vm.Detalles
+                .Where(d => d.Cantidad > 0)
+                .ToList();
+
+            if (!detallesValidos.Any())
+            {
+                ModelState.AddModelError("", "Debe seleccionar al menos un producto con cantidad mayor a cero.");
+                vm.ProductosDisponibles = _context.Productos.ToList();
                 return View(vm);
             }
 
             var factura = new Factura
             {
-                NombreCliente = vm.NombreCliente.Trim(),
+                NombreCliente = vm.NombreCliente,
                 Fecha = DateTime.Now,
-                Detalles = vm.Detalles.Where(d => d.Cantidad > 0).ToList()
+                Detalles = detallesValidos
             };
 
             _service.CalcularTotales(factura);

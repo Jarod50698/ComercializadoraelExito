@@ -4,7 +4,7 @@
 
 <form asp-action="Crear" method="post">
 
-    <div class="mb-3">
+    <div asp-validation-summary="All" class="text-danger">
         <label>Nombre Cliente</label>
         <input asp-for="NombreCliente" class="form-control" />
     </div>
